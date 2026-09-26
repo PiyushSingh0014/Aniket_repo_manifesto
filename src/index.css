@@ -1,0 +1,211 @@
+@import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/jetbrains-mono/index.css";
+@import "@fontsource/kalam/latin-400.css";
+/* Small subsets declared last, so the browser prefers them (see scripts/fonts.mjs) */
+@import "./fonts/fonts.css";
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens. Sampled from the campaign poster. Do not add hues.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-*: initial;
+  --color-ink: #001a44;
+  --color-ink-2: #00244e;
+  --color-body: #344054;
+  --color-muted: #475467;
+  --color-royal: #006cea;
+  --color-royal-deep: #0058c8;
+  --color-cyan: #1eaee4;
+  --color-paper: #f7f8fa;
+  --color-white: #ffffff;
+  --color-line: #d9dee7;
+  --color-wash: #eaf2ff;
+  --color-grid: color-mix(in srgb, #006cea 6%, transparent);
+  /* Status colours: concept demos and form errors only */
+  --color-success: #067647;
+  --color-warning: #b54708;
+  --color-danger: #b42318;
+
+  --font-*: initial;
+  --font-display: "Archivo Variable", "Archivo", "Arial Narrow", sans-serif;
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-hand: "Kalam", "Segoe Print", cursive;
+
+  /* Type scale: 12 (tags) · 13 · 15 · 17 · 20 · 26 · 36 · 52 */
+  --text-*: initial;
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: 1.25rem;
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.5rem;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.65;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.45;
+  --text-xl: 1.625rem;
+  --text-xl--line-height: 1.15;
+  --text-2xl: 2.25rem;
+  --text-2xl--line-height: 1;
+  --text-3xl: 3.25rem;
+  --text-3xl--line-height: 0.98;
+
+  --animate-fade-in: fade-in 180ms ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-optical-sizing: auto;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 1.0625rem;
+    }
+  }
+
+  section[id] {
+    scroll-margin-top: 4rem;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-royal);
+    outline-offset: 2px;
+  }
+
+  .on-dark :focus-visible {
+    outline-color: var(--color-cyan);
+  }
+
+  ::selection {
+    background-color: var(--color-royal);
+    color: var(--color-white);
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilities
+   ------------------------------------------------------------------ */
+
+/* 1200px content column with 16px (mobile) / 24px gutters */
+@utility wrap {
+  width: 100%;
+  max-width: calc(1200px + 3rem);
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (min-width: 768px) {
+    padding-inline: 1.5rem;
+  }
+}
+
+/* Heavy, condensed, uppercase lockup. Name, section titles and pillar titles only. */
+@utility type-display {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-stretch: 70%;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  word-spacing: 0.1em;
+}
+
+/* Small mono labels: sheet indices, metadata */
+@utility type-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 32px blueprint grid, 1px lines, royal at 6% */
+@utility bp-grid {
+  background-image:
+    linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+
+/* ------------------------------------------------------------------
+   On-enter reveal: one per section, once. Nothing is hidden until the
+   app has started (boot.tsx adds .js), and never under reduced motion.
+   ------------------------------------------------------------------ */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 250ms ease-out,
+    transform 250ms ease-out;
+}
+
+.js [data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Spam trap: present for bots, hidden from people and assistive tech */
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
