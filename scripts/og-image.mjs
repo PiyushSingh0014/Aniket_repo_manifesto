@@ -38,6 +38,15 @@ const photo = existsSync(photoPath)
   ? `data:image/png;base64,${(await sharp(photoPath).png().toBuffer()).toString("base64")}`
   : null;
 
+// The frame follows the photo's own aspect ratio, so the photo is never cropped.
+const frameWidth = 330;
+let frameHeight = 412;
+if (photo) {
+  const { width, height } = await sharp(photoPath).metadata();
+  frameHeight = Math.min(440, Math.round((frameWidth * height) / width));
+}
+const frameTop = Math.round((630 - frameHeight - 40) / 2);
+
 const html = `<!doctype html>
 <html><head><meta charset="utf-8"><style>
 @font-face { font-family: Archivo; src: url(${archivo}) format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; }
@@ -62,9 +71,9 @@ h1 .last { color: #1EAEE4; }
 .role { font-size: 38px; font-weight: 600; margin-top: 34px; }
 .tag { font-family: Mono; font-size: 18px; letter-spacing: .24em; color: rgba(255,255,255,.72); margin-top: 18px; }
 .tag b { color: #1EAEE4; font-weight: 400; }
-.frame { position: absolute; right: 96px; top: 96px; width: 330px; height: 412px;
+.frame { position: absolute; right: 96px; top: ${frameTop}px; width: ${frameWidth}px; height: ${frameHeight}px;
          outline: 1.5px solid rgba(255,255,255,.7); outline-offset: 12px; background: #00244E; overflow: visible; }
-.frame img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .mono { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
         font-family: Archivo; font-weight: 880; font-stretch: 70%; font-size: 150px; color: #fff;
         background-image:
@@ -73,7 +82,7 @@ h1 .last { color: #1EAEE4; }
         background-size: 32px 32px; }
 .mono b { color: #1EAEE4; }
 .tick { position: absolute; background: rgba(255,255,255,.7); }
-.caption { position: absolute; right: 96px; top: 536px; width: 330px; font-family: Mono; font-size: 15px; white-space: nowrap; color: rgba(255,255,255,.72); }
+.caption { position: absolute; right: 96px; top: ${frameTop + frameHeight + 26}px; width: ${frameWidth}px; font-family: Mono; font-size: 15px; white-space: nowrap; color: rgba(255,255,255,.72); }
 </style></head><body>
 <div class="left">
   <p class="meta">IIITDM Kurnool · Students' Union Elections 2026–27</p>

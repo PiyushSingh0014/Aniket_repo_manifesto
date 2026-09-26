@@ -26,7 +26,7 @@ const firstExisting = (names) => names.map(src).find((file) => existsSync(file))
 const photo = firstExisting(["aniket.jpg", "aniket.jpeg", "aniket.png", "aniket.webp"]);
 if (photo) {
   const out = pub("aniket.webp");
-  let quality = 82;
+  let quality = 90;
   let info;
   do {
     info = await sharp(photo)
